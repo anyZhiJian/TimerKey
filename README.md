@@ -12,9 +12,9 @@
 - **TimerKey**的代码为C语言设计，支持C++环境，移植无需其他步骤，直接将源代码添加到项目中即可
 - 对象的创建默认使用C语言的内存标准库，如有特殊的内存分配需求，可以将头文件中`tkey_malloc`和`tkey_free`宏替换为项目中所使用的内存分配函数
 
-# 如何使用
+# 使用
 ## STEP 1
-创建一个按键对象，可以选择创建默认按键对象或者自定义按键对象
+创建一个按键对象并初始化对象，可以选择创建默认按键对象或者自定义按键对象
 ### 创建默认按键对象
 调用`tkey_create_default`函数创建默认按键对象  
 默认按键对象的属性如下:  
@@ -25,7 +25,7 @@
 - 按键按下时电平:0 (低电平)
 
 ### 创建自定义按键对象
-调用`tkey_create`函数创建自定义按键对象，使用`tkey_init_t`结构体初始化按键对象  
+调用`tkey_create`函数创建自定义按键对象，使用`tkey_config_t`结构体初始化按键对象  
 结构体参数如下:  
 - event_cb:事件回调函数
 - detect_cb:检测回调函数
@@ -36,15 +36,7 @@
 - pressed_level:按键按下时电平
 
 ## STEP 2
-调用`tkey_register_cbs`函数为按键注册事件回调函数和检测回调函数  
-## STEP 3
-调用`tkey_check_init`函数检测按键初始化状态，返回值如下:  
-- 0:初始化完成
-- -1:初始化未完成
-
-该函数会检测回调函数的有效性，每次注册回调函数后都必须调用该函数
-## STEP 4
-初始化完成在对应平台的定时器回调中调用`tkey_handler`函数处理按键的扫描事件
+初始化完成后再周期性地调用`tkey_handler`函数处理按键的扫描事件,每个按键对象都需要调用该函数进行处理
 # 回调函数编写
 ## 检测回调函数
 ```c
@@ -59,10 +51,11 @@ int tkey_detect_cb(void *user_data)
 所有的按键事件如下:  
 - TKEY_EVENT_PRESS:按下
 - TKEY_EVENT_LONG_PRESS:长按
+- TKEY_EVENT_MULTI_PRESS:连续按下
 - TKEY_EVENT_RELEASE:释放
 - TKEY_EVENT_LONG_RELEASE:长按之后释放
-- TKEY_EVENT_MULTI_PRESS:连续按下
 - TKEY_EVENT_MULTI_RELEASE:连续按下后释放
+- TKEY_EVENT_NORMAL_PRESS:一般按下状态，包括按下和连续按下
 - TKEY_EVENT_ALL_PRESS:所有按下的状态
 - TKEY_EVENT_ALL_RELEASE:所有释放的状态
 
@@ -73,7 +66,7 @@ void tkey_event_cb(tkey_handle_t key, tkey_event_t event, uint8_t press_count, v
     switch(key)
     {
         case key1:
-        if(event & TKEY_EVENT_ALL_PRESS)
+        if(event & TKEY_EVENT_NORMAL_PRESS)
         {
             printf("key1 pressed!\r\n");
             printf("key1 pressed count:%d\r\n", (int)press_count);
@@ -81,7 +74,7 @@ void tkey_event_cb(tkey_handle_t key, tkey_event_t event, uint8_t press_count, v
         }
         break;
         case key2:
-        if(event & TKEY_EVENT_ALL_RELEASE)
+        if(event & (TKEY_EVENT_RELEASE | TKEY_EVENT_LONG_RELEASE))
         {
             printf("key2 released!\r\n");
             ...
