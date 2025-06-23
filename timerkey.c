@@ -61,7 +61,7 @@ tkey_t *tkey_create_default(tkey_event_cb_t event_cb,
     tkey_t *key = tkey_create(&config);
     if (!key)
         return NULL;
-    tkey_register_cbs(key, event_cb, detect_cb, user_data);
+    tkey_register_callback(key, event_cb, detect_cb, user_data);
     return key;
 }
 
