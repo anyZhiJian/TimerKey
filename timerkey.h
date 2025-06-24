@@ -1,12 +1,12 @@
 #ifndef __TIMERKEY_H
 #define __TIMERKEY_H
 
-#include <stdint.h>
-#include <stdlib.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdint.h>
+#include <stdlib.h>
 
 #define tkey_malloc(size) malloc(size)
 #define tkey_free(ptr) free(ptr)
