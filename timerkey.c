@@ -126,9 +126,8 @@ void tkey_handler(tkey_handle_t key) {
 }
 
 void tkey_multi_handler(tkey_handle_t key[], uint32_t num) {
-    uint32_t i = num;
-    while (i--) {
-        tkey_handler(key[i]);
+    while (num--) {
+        tkey_handler(key[num]);
     }
 }
 

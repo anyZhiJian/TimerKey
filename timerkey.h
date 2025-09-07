@@ -121,6 +121,7 @@ void tkey_handler(tkey_handle_t key);
 /**
  * @brief Multiple key handlers, these keys should be detected at the same
  * frequency
+ * @note The function reads the elements in the array from back to front
  *
  * @param key key handle array
  * @param num The number of key objects
